@@ -6,7 +6,7 @@ import { registerSchema } from '../validators/validationSchemas';
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post('/register', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     //validate schema
     const validateBody = await registerSchema.validateAsync(req.body);
@@ -36,3 +36,5 @@ router.post('/register', async (req, res) => {
     }
   }
 });
+
+export default router;
