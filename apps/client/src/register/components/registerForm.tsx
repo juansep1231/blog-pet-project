@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import FormInput from '../../components/FormInput';
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const RegisterForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -44,13 +45,36 @@ const RegisterForm: React.FC = () => {
       setConfirmPasswordError('');
     }
   };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validatePassword(password)) {
+      return;
+    }
+    if (password !== confirmPassword) {
+      setConfirmPasswordError('Passwords do not match');
+      return;
+    }
+    try {
+      const response = await axios.post('http://localhost:3000/register', {
+        email,
+        password,
+        firstName,
+        lastName,
+      });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex justify-center h-screen pt-14 bg-neutral-100">
       <div className="flex flex-col items-center justify-center border bg-white rounded  w-96 h-[650px] gap-5 py-8">
         <div>
           <h1 className="text-2xl text-gray-700">Create new Account</h1>
         </div>
-        <form className="flex flex-col gap-8">
+        <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
             <FormInput
               required={true}
