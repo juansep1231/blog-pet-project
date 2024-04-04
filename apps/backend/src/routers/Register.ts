@@ -2,17 +2,21 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { registerSchema } from '../validators/validationSchemas';
+import { SALT_STEPS } from '../utils/constants';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.post('/register', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     //validate schema
     const validateBody = await registerSchema.validateAsync(req.body);
 
     //hash password
-    const encryptedPassword = await bcrypt.hash(validateBody.password, 10);
+    const encryptedPassword = await bcrypt.hash(
+      validateBody.password,
+      SALT_STEPS
+    );
 
     //create user
     const user = await prisma.user.create({
@@ -36,3 +40,5 @@ router.post('/register', async (req, res) => {
     }
   }
 });
+
+export default router;
