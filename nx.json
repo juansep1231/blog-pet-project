@@ -59,15 +59,15 @@
     "@nx/react": {
       "application": {
         "babel": true,
-        "style": "tailwind",
+        "style": "material-ui",
         "linter": "eslint",
         "bundler": "vite"
       },
       "component": {
-        "style": "tailwind"
+        "style": "material-ui"
       },
       "library": {
-        "style": "tailwind",
+        "style": "material-ui",
         "linter": "eslint"
       }
     }
