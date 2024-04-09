@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import FormInput from '../../components/FormInput';
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -76,7 +76,7 @@ const RegisterForm: React.FC = () => {
         </div>
         <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-5">
-            <FormInput
+            <TextField
               required={true}
               label="Name"
               name="firstName"
@@ -86,7 +86,7 @@ const RegisterForm: React.FC = () => {
               placeholder="Enter your name"
             />
 
-            <FormInput
+            <TextField
               required={true}
               label="Last Name"
               name="lastName"
@@ -96,7 +96,7 @@ const RegisterForm: React.FC = () => {
               placeholder="Enter your name"
             />
 
-            <FormInput
+            <TextField
               required={true}
               label="Email"
               name="email"
