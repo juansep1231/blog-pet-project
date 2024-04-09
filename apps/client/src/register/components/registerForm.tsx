@@ -1,5 +1,4 @@
 import { Button, TextField } from '@mui/material';
-import FormInput from '../../components/FormInput';
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -105,7 +104,7 @@ const RegisterForm: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
             />
-            <FormInput
+            <TextField
               required={true}
               label="Password"
               name="password"
@@ -116,7 +115,7 @@ const RegisterForm: React.FC = () => {
               helperText={passwordError}
               error={passwordError.length > 0}
             />
-            <FormInput
+            <TextField
               required={true}
               label="Confirm Password"
               name="confirmPassword"
