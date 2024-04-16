@@ -1,141 +1,150 @@
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography, Box, Container } from '@mui/material';
+import { z } from 'zod';
 import React, { useState } from 'react';
 import axios from 'axios';
 
+interface RegisterFormProps {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  firstName: string;
+  lastName: string;
+}
+
+const initialFormValues: RegisterFormProps = {
+  email: '',
+  password: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
+};
+
+const registerFormSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(6),
+    confirmPassword: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
 const RegisterForm: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [formValues, setFormValues] =
+    useState<RegisterFormProps>(initialFormValues);
+  const [errors, setErrors] = useState<string[]>([]);
 
-  const validatePassword = (password: string) => {
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters long');
-      return false;
-    } else {
-      setPasswordError('');
-      return true;
-    }
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPassword = e.target.value;
-    setPassword(newPassword);
-    validatePassword(newPassword);
-    // Check if confirm password matches the new password
-    if (confirmPassword && confirmPassword !== newPassword) {
-      setConfirmPasswordError('Passwords do not match');
-    } else {
-      setConfirmPasswordError('');
-    }
-  };
-
-  const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newConfirmPassword = e.target.value;
-    setConfirmPassword(newConfirmPassword);
-    if (password !== newConfirmPassword) {
-      setConfirmPasswordError('Passwords do not match');
-    } else {
-      setConfirmPasswordError('');
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validatePassword(password)) {
-      return;
-    }
-    if (password !== confirmPassword) {
-      setConfirmPasswordError('Passwords do not match');
-      return;
-    }
+
     try {
-      const response = await axios.post('http://localhost:3000/register', {
-        email,
-        password,
-        firstName,
-        lastName,
-      });
+      const validatedData = registerFormSchema.parse(formValues);
+
+      const response = await axios.post(
+        'http://localhost:3000/register',
+        validatedData
+      );
       console.log(response);
     } catch (error) {
-      console.error(error);
+      if (error instanceof z.ZodError) {
+        console.error(error.errors);
+      } else {
+        console.error(error);
+      }
     }
   };
 
   return (
-    <div className="flex justify-center h-screen pt-14 bg-neutral-100">
-      <div className="flex flex-col items-center justify-center border bg-white rounded  w-96 h-[650px] gap-5 py-8">
-        <div>
-          <h1 className="text-2xl text-gray-700">Create new Account</h1>
-        </div>
-        <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-5">
-            <TextField
-              required={true}
-              label="Name"
-              name="firstName"
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Enter your name"
-            />
-
-            <TextField
-              required={true}
-              label="Last Name"
-              name="lastName"
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Enter your name"
-            />
-
-            <TextField
-              required={true}
-              label="Email"
-              name="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-            <TextField
-              required={true}
-              label="Password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="Enter your password"
-              helperText={passwordError}
-              error={passwordError.length > 0}
-            />
-            <TextField
-              required={true}
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-              placeholder="Enter your password again"
-              helperText={confirmPasswordError}
-              error={confirmPasswordError.length > 0}
-            />
-          </div>
-
-          <div className="flex justify-center">
-            <Button variant="contained" type="submit">
-              Sign Up
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Create new Account
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="First Name"
+            type="text"
+            name="firstName"
+            value={formValues.firstName}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Last Name"
+            type="text"
+            name="lastName"
+            value={formValues.lastName}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Email"
+            type="email"
+            name="email"
+            value={formValues.email}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Password"
+            type="password"
+            name="password"
+            value={formValues.password}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Confirm Password"
+            type="password"
+            name="confirmPassword"
+            value={formValues.confirmPassword}
+            onChange={handleChange}
+          />
+          {errors.map((error, index) => (
+            <p key={index} className="text-red-500">
+              {error}
+            </p>
+          ))}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign Up
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
