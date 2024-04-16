@@ -1,16 +1,15 @@
 import RegisterForm from '../register/components/registerForm';
-import NxWelcome from './nx-welcome';
 
-import { Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes, Link, BrowserRouter } from 'react-router-dom';
 
 export function App() {
   return (
-    <div>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<RegisterForm />} />
       </Routes>
       {/* END: routes */}
-    </div>
+    </BrowserRouter>
   );
 }
 
