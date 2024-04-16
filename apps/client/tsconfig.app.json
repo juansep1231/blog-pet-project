@@ -24,6 +24,6 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "main.tsx"
+    "src/main.tsx"
   ]
 }
