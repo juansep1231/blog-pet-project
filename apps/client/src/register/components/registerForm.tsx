@@ -21,11 +21,11 @@ const initialFormValues: RegisterFormProps = {
 
 const registerFormSchema = z
   .object({
-    email: z.string().email(),
+    email: z.string().email().max(255),
     password: z.string().min(6),
     confirmPassword: z.string(),
-    firstName: z.string(),
-    lastName: z.string(),
+    firstName: z.string().max(30),
+    lastName: z.string().max(30),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -52,7 +52,7 @@ const RegisterForm: React.FC = () => {
       const validatedData = registerFormSchema.parse(formValues);
 
       const response = await axios.post(
-        'http://localhost:3000/register',
+        'http://localhost:3000/api/v1/register',
         validatedData
       );
       console.log(response);
