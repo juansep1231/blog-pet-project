@@ -1,6 +1,6 @@
 import RegisterForm from '../register/components/registerForm';
 
-import { Route, Routes, Link, BrowserRouter } from 'react-router-dom';
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
 export function App() {
   return (
