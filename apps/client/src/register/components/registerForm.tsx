@@ -2,7 +2,7 @@ import { Button, TextField, Typography, Box, Container } from '@mui/material';
 import { z } from 'zod';
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import Alert from '@mui/material/Alert';
 interface RegisterFormProps {
   email: string;
   password: string;
@@ -49,7 +49,8 @@ const RegisterForm: React.FC = () => {
     e.preventDefault();
 
     try {
-      const validatedData = registerFormSchema.parse(formValues);
+      const { confirmPassword, ...validatedData } =
+        registerFormSchema.parse(formValues);
 
       const response = await axios.post(
         'http://localhost:3000/api/v1/register',
@@ -58,7 +59,9 @@ const RegisterForm: React.FC = () => {
       console.log(response);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.error(error.errors);
+        const validationErrors = error.errors.map((err) => err.message);
+
+        setErrors(validationErrors);
       } else {
         console.error(error);
       }
@@ -130,9 +133,9 @@ const RegisterForm: React.FC = () => {
             onChange={handleChange}
           />
           {errors.map((error, index) => (
-            <p key={index} className="text-red-500">
+            <Alert severity="error" key={index}>
               {error}
-            </p>
+            </Alert>
           ))}
           <Button
             type="submit"
