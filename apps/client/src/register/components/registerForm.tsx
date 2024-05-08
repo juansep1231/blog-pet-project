@@ -1,8 +1,9 @@
 import { Button, TextField, Typography, Box, Container } from '@mui/material';
-import { z } from 'zod';
+import { set, z } from 'zod';
 import React, { useState } from 'react';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
+import { postRegisterNewUser } from '../../services/registerService';
 interface RegisterFormProps {
   email: string;
   password: string;
@@ -51,19 +52,13 @@ const RegisterForm: React.FC = () => {
     try {
       const { confirmPassword, ...validatedData } =
         registerFormSchema.parse(formValues);
-
-      const response = await axios.post(
-        'http://localhost:3000/api/v1/register',
-        validatedData
-      );
-      console.log(response);
+      await postRegisterNewUser(validatedData);
     } catch (error) {
       if (error instanceof z.ZodError) {
         const validationErrors = error.errors.map((err) => err.message);
-
         setErrors(validationErrors);
       } else {
-        console.error(error);
+        setErrors(['Error registering new user']);
       }
     }
   };
