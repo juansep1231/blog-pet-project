@@ -1,7 +1,6 @@
 import { Button, TextField, Typography, Box, Container } from '@mui/material';
-import { set, z } from 'zod';
+import { z } from 'zod';
 import React, { useState } from 'react';
-import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import { postRegisterNewUser } from '../../services/registerService';
 interface RegisterFormProps {
