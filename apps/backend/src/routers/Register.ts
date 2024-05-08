@@ -4,10 +4,11 @@ import bcrypt from 'bcrypt';
 import { registerSchema } from '../validators/validationSchemas';
 import { SALT_STEPS } from '../utils/constants';
 
-const router = express.Router();
+const registerRouter = express.Router();
 const prisma = new PrismaClient();
 
-router.post('/', async (req, res) => {
+
+registerRouter.post('/', async (req, res) => {
   try {
     //validate schema
     const validateBody = await registerSchema.validateAsync(req.body);
@@ -41,4 +42,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-export default router;
+
+export { registerRouter };
+
+
